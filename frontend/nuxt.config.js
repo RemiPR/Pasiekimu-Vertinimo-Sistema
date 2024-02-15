@@ -8,4 +8,9 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+  plugins: ["~/plugins/pinia.js"],
+  modules: ["@nuxtjs/i18n"],
+  i18n: {
+    // configuration
+  },
 });
