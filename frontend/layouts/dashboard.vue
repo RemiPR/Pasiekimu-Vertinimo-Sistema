@@ -1,8 +1,8 @@
 <template>
-  <div class="flex h-screen bg-gray-100">
+  <div class="flex h-screen bg-dashboardBg">
     <Sidebar />
     <div class="flex flex-col flex-grow">
-      <LanguageToggler />
+      <LanguageToggler class="bg-dashboardBg" />
       <main class="flex-grow overflow-auto">
         <NuxtPage />
       </main>

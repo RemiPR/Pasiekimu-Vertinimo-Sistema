@@ -40,7 +40,7 @@
               <span class="bounce" style="animation-delay: 5.2s">"</span>
               <span class="bounce" style="animation-delay: 5.4s">)</span>
             </h1>
-            <p class="text-white text-xl">Pasiruošę išbandyti savo jėgas?</p>
+            <p class="text-white text-2xl">Pasiruošę išbandyti savo jėgas?</p>
           </div>
 
           <div class="absolute bottom-0 scale-x-150 w-full flex justify-center">
@@ -76,7 +76,7 @@
         />
       </div>
       <div class="absolute top-0 right-0 m-4">
-        <button class="p-2 bg-gray-200 rounded-full">EN</button>
+        <LanguageToggler />
       </div>
       <div class="w-full max-w-md mx-auto">
         <h2 class="text-3xl font-bold mb-10">Prisijunkite</h2>
@@ -123,11 +123,13 @@
           >
             Prisijungti
           </button>
-          <p class="mt-6 text-center text-gray-600">Neturite paskyros?</p>
-          <hr class="my-4 border-gray-300" />
+          <p class="mt-10 text-center text-gray-600 text-xl">
+            Neturite paskyros?
+          </p>
+          <hr class="my-8 border-gray-300" />
           <a
             href="#"
-            class="block text-center text-lg text-blue-500 hover:text-blue-700 font-semibold"
+            class="block text-center text-3xl text-blue-500 hover:text-blue-700 font-semibold"
           >
             Prisijunkite kaip svečias
           </a>
@@ -248,12 +250,13 @@
 }
 </style>
 
-<script>
-export default {
-  methods: {
-    goToAdmin() {
-      this.$router.push("/admin");
-    },
-  },
+<script setup>
+import { useRouter } from "vue-router";
+import LanguageToggler from "@/components/nav/LanguageToggler.vue";
+
+const router = useRouter();
+
+const goToAdmin = () => {
+  router.push("/admin");
 };
 </script>

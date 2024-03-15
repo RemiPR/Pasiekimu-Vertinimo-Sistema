@@ -9,7 +9,14 @@ export default {
     "./error.vue",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        navbar: "#286575",
+        navbarText: "#eff7f9",
+        dashboardBg: "#e0eef1",
+        dashboardBtn: "#2c6878",
+      },
+    },
   },
   plugins: [],
 };

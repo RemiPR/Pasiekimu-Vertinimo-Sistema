@@ -33,29 +33,30 @@ function selectMenuItem(item) {
 </script>
 
 <template>
-  <aside class="w-64 h-full bg-white" aria-label="Sidebar">
+  <aside class="w-64 h-full bg-navbar text-navbarText" aria-label="Sidebar">
     <div class="flex justify-center px-4 py-8">
       <img
-        src="@/static/shared/kvk-logo.svg"
+        src="@/static/shared/kvk-white-logo.png"
         alt="Logo"
-        class="h-14 w-auto cursor-pointer"
+        class="h-14 w-auto cursor-pointer hover:scale-105"
       />
     </div>
     <nav class="mt-12">
-      <ul class="grid flex-col justify-center items-center gap-14">
-        <li
-          v-for="item in menuItems"
-          :key="item.text"
-          class="flex items-center"
-        >
+      <ul class="space-y-2">
+        <li v-for="item in menuItems" :key="item.text" class="group">
           <a
+            href="#"
             @click.prevent="selectMenuItem(item)"
-            class="flex items-center space-x-5"
+            class="flex items-center space-x-4 p-3 rounded-lg hover:bg-sidebarHoverBg"
+            :class="{
+              'bg-sidebarActiveBg': sidebarStore.activeMenuItem === item.text,
+              'focus:outline-none': sidebarStore.activeMenuItem !== item.text,
+              'focus:ring focus:ring-sidebarRing':
+                sidebarStore.activeMenuItem === item.text,
+            }"
           >
-            <div class="flex items-center">
-              <component :is="item.icon" class="h-7 w-7" />
-            </div>
-            <span class="text-lg">{{ item.text }}</span>
+            <component :is="item.icon" class="h-6 w-6" />
+            <span class="text-base font-medium">{{ item.text }}</span>
           </a>
         </li>
       </ul>
@@ -63,6 +64,24 @@ function selectMenuItem(item) {
   </aside>
 </template>
 
-<style>
-/* Here you can add global styles for your sidebar, if necessary */
+<style scoped>
+/* Scoped styles for sidebar */
+/* .bg-navbar {
+  background-color: #2c3e50; /* Adjust the color to match your navbar color */
+
+.bg-sidebarHoverBg {
+  background-color: #34495e; /* Slightly lighter than the navbar for hover */
+}
+
+.bg-sidebarFocusBg {
+  background-color: #2c3e50; /* Same as navbar or slightly different for focus */
+}
+
+.bg-sidebarActiveBg {
+  background-color: #1abc9c; /* A contrasting color for the active item */
+}
+
+.focus\:ring-sidebarRing {
+  box-shadow: 0 0 0 2px #1abc9c; /* Ring color for focus, similar to active item */
+}
 </style>
