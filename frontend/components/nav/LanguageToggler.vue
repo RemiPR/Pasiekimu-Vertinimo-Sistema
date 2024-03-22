@@ -7,12 +7,12 @@
       aria-label="Toggle language to English"
     >
       <img
-        src="@/static/shared/usa-flag-icon.png"
+        src="@/static/shared/lt-flag.png"
         alt=""
         class="h-8 w-auto mr-2"
         aria-hidden="true"
       />
-      EN
+      LT
     </button>
   </div>
 </template>

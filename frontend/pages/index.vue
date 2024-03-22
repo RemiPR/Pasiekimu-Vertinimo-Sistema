@@ -1,7 +1,13 @@
 <template>
-  <div class="flex h-screen overflow-hidden">
-    <!-- Left side with the background image and text overlay -->
-    <div class="flex w-3/5 h-full">
+  <div
+    class="h-screen overflow-hidden relative"
+    :class="{ flex: showLeftPanel }"
+  >
+    <!-- Left panel code -->
+    <div
+      :class="showLeftPanel ? 'w-3/5' : 'hidden'"
+      class="flex h-full transition-width duration-300 relative"
+    >
       <div class="relative w-full">
         <img
           src="./../static/welcome-page/welcome-bg.png"
@@ -43,31 +49,41 @@
             <p class="text-white text-2xl">Pasiruošę išbandyti savo jėgas?</p>
           </div>
 
-          <div class="absolute bottom-0 scale-x-150 w-full flex justify-center">
-            <img
-              src="./../static/welcome-page/illustration-container.png"
-              alt="cloud-shape"
-              class="w-auto h-auto"
-            />
-            <div class="absolute flex items-start justify-center w-full"></div>
-            <div class="absolute inset-0 flex items-end justify-center">
-              <img
-                src="./../static/welcome-page/welcome-illustration-left.png"
-                alt="Left Illustration"
-                class="w-64 h-64"
+          <div
+            class="absolute bottom-0 w-full flex justify-center overflow-hidden"
+          >
+            <video autoplay loop muted playsinline style="object-fit: cover">
+              <source
+                src="./../static/welcome-page/welcome-page-animation.webm"
+                type="video/webm"
               />
-              <img
-                src="./../static/welcome-page/welcome-illustration-right.png"
-                alt="Right Illustration"
-                class="w-64 h-64"
-              />
-            </div>
+              Your browser does not support the video tag.
+            </video>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="flex w-2/5 items-center justify-center bg-white p-12 relative">
+    <div
+      class="flex absolute top-1/2 transform -translate-y-1/2 z-30 bg-blue-500"
+      :class="showLeftPanel ? 'left-panel-visible' : 'left-panel-hidden'"
+      @click="toggleLeftPanel"
+    >
+      <img
+        src="./../static/welcome-page/right-arrow.png"
+        alt="Toggle Sidebar"
+        class="cursor-pointer"
+        :class="showLeftPanel ? 'rotate-0' : 'rotate-180'"
+        style="width: 48px; height: 48px"
+      />
+    </div>
+
+    <div
+      :class="[
+        showLeftPanel ? 'w-2/5' : 'w-full',
+        'flex h-screen items-center justify-center bg-white p-12 relative',
+      ]"
+    >
       <div class="absolute top-0 left-0 m-8">
         <img
           src="@/static/shared/kvk-logo.svg"
@@ -78,7 +94,7 @@
       <div class="absolute top-0 right-0 m-4">
         <LanguageToggler />
       </div>
-      <div class="w-full max-w-md mx-auto">
+      <div class="w-full max-w-md mx-auto h-full flex flex-col justify-center">
         <h2 class="text-3xl font-bold mb-10">Prisijunkite</h2>
         <form @submit.prevent="login">
           <div class="mb-6">
@@ -248,13 +264,33 @@
   animation-duration: 6s; /* the full duration for the cycle to complete */
   animation-iteration-count: infinite;
 }
+.rotate-0 {
+  transform: rotate(0deg);
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+.left-panel-visible {
+  left: calc(60% - 64px);
+}
+
+.left-panel-hidden {
+  left: calc(0% + 20px);
+}
 </style>
 
 <script setup>
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import LanguageToggler from "@/components/nav/LanguageToggler.vue";
 
 const router = useRouter();
+const showLeftPanel = ref(true);
+
+const toggleLeftPanel = () => {
+  showLeftPanel.value = !showLeftPanel.value;
+};
 
 const goToAdmin = () => {
   router.push("/admin");
