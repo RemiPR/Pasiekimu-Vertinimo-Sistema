@@ -5,7 +5,7 @@
   >
     <!-- Left panel code -->
     <div
-      :class="showLeftPanel ? 'w-3/5' : 'hidden'"
+      :class="showLeftPanel ? 'w-2/4' : 'hidden'"
       class="flex h-full transition-width duration-300 relative"
     >
       <div class="relative w-full">
@@ -46,41 +46,42 @@
               <span class="bounce" style="animation-delay: 5.2s">"</span>
               <span class="bounce" style="animation-delay: 5.4s">)</span>
             </h1>
-            <p class="text-white text-2xl">Pasiruošę išbandyti savo jėgas?</p>
+            <p class="text-white text-3xl">Pasiruošę išbandyti savo jėgas?</p>
           </div>
 
           <div
             class="absolute bottom-0 w-full flex justify-center overflow-hidden"
           >
-            <video autoplay loop muted playsinline style="object-fit: cover">
-              <source
-                src="./../static/welcome-page/welcome-page-animation.webm"
-                type="video/webm"
-              />
-              Your browser does not support the video tag.
-            </video>
+            <img
+              src="./../static/welcome-page/programmer.gif"
+              style="object-fit: cover; width: 512px; height: 480px"
+            />
           </div>
         </div>
       </div>
     </div>
 
     <div
-      class="flex absolute top-1/2 transform -translate-y-1/2 z-30 bg-blue-500"
+      class="flex absolute top-1/2 transform -translate-y-1/2 z-30"
       :class="showLeftPanel ? 'left-panel-visible' : 'left-panel-hidden'"
       @click="toggleLeftPanel"
     >
       <img
-        src="./../static/welcome-page/right-arrow.png"
+        :src="
+          showLeftPanel
+            ? '/welcome-page/right-arrow-white.png'
+            : '/welcome-page/right-arrow-blue.png'
+        "
         alt="Toggle Sidebar"
         class="cursor-pointer"
-        :class="showLeftPanel ? 'rotate-0' : 'rotate-180'"
+        :class="showLeftPanel ? 'rotate-0' : 'rotate-0'"
         style="width: 48px; height: 48px"
       />
     </div>
 
     <div
       :class="[
-        showLeftPanel ? 'w-2/5' : 'w-full',
+        showLeftPanel ? 'w-2/4' : 'w-full',
         'flex h-screen items-center justify-center bg-white p-12 relative',
       ]"
     >
@@ -272,7 +273,7 @@
   transform: rotate(180deg);
 }
 .left-panel-visible {
-  left: calc(60% - 64px);
+  left: calc(50% - 64px);
 }
 
 .left-panel-hidden {

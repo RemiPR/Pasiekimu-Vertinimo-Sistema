@@ -1,10 +1,14 @@
-<!-- components/Activity.vue -->
 <template>
-  <div class="w-80 bg-white p-4 shadow rounded-lg">
-    <!-- Activity content -->
+  <div class="activity-card bg-white shadow-lg rounded-lg p-4">
+    <h2 class="font-bold text-lg">Activity</h2>
+    <!-- Activity content goes here -->
   </div>
 </template>
 
+<script setup>
+// Script setup for ActivityCard, if needed
+</script>
+
 <style>
-/* Additional styling if needed */
+/* Styles for ActivityCard */
 </style>

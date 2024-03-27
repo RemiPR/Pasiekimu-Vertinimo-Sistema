@@ -42,12 +42,12 @@ function selectMenuItem(item) {
       />
     </div>
     <nav class="mt-12">
-      <ul class="space-y-2">
+      <ul class="space-y-3">
         <li v-for="item in menuItems" :key="item.text" class="group">
           <a
             href="#"
             @click.prevent="selectMenuItem(item)"
-            class="flex items-center space-x-4 p-3 rounded-lg hover:bg-sidebarHoverBg"
+            class="flex items-center space-x-4 p-3 m-6 rounded-lg hover:bg-sidebarHoverBg"
             :class="{
               'bg-sidebarActiveBg': sidebarStore.activeMenuItem === item.text,
               'focus:outline-none': sidebarStore.activeMenuItem !== item.text,
