@@ -2,7 +2,7 @@
   <div class="flex justify-end items-center h-16 py-12 px-6">
     <!-- Language toggler button -->
     <button
-      class="flex items-center px-4 py-2 text-black font-bold hover:scale-105"
+      class="flex items-center px-4 py-2 text-black font-bold hover:scale-105 duration-300"
       aria-label="Toggle language to English"
     >
       <img

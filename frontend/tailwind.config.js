@@ -16,6 +16,9 @@ export default {
         dashboardBg: "#e0eef1",
         dashboardBtn: "#2c6878",
       },
+      fontFamily: {
+        montserrat: ["Montserrat"],
+      },
     },
   },
   plugins: [],

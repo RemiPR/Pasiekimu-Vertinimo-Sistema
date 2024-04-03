@@ -1,19 +1,40 @@
 <template>
   <div
-    class="h-screen overflow-hidden relative"
+    class="flex flex-row h-screen overflow-hidden relative"
     :class="{ flex: showLeftPanel }"
   >
-    <!-- Left panel code -->
     <div
-      :class="showLeftPanel ? 'w-2/4' : 'hidden'"
-      class="flex h-full transition-width duration-300 relative"
+      v-if="showModal"
+      class="fixed inset-0 bg-black bg-opacity-50 z-40"
+      @click="showModal = false"
+    ></div>
+    <!-- Left panel -->
+    <div
+      :class="[
+        showLeftPanel ? 'w-2/4' : 'w-0',
+        'flex',
+        'relative',
+        'z-10',
+        'overflow-hidden',
+        'transition-width',
+        'duration-1000',
+      ]"
+      style="min-height: 100vh"
     >
-      <div class="relative w-full">
+      <!-- Background img -->
+      <div
+        class="absolute inset-0 transition-transform duration-1000"
+        :style="{
+          transform: showLeftPanel ? 'translateX(0)' : 'translateX(-100%)',
+        }"
+      >
         <img
           src="./../static/welcome-page/welcome-bg.png"
           alt="bg-gradient"
           class="absolute w-full h-full object-cover"
         />
+
+        <!-- Text -->
         <div class="absolute inset-0 flex items-center justify-center flex-col">
           <div class="text-center mb-4">
             <h1 class="text-white text-5xl font-semibold mb-6">
@@ -46,9 +67,12 @@
               <span class="bounce" style="animation-delay: 5.2s">"</span>
               <span class="bounce" style="animation-delay: 5.4s">)</span>
             </h1>
-            <p class="text-white text-3xl">Pasiruošę išbandyti savo jėgas?</p>
+            <p class="text-white text-3xl font-sans">
+              Pasiruošę išbandyti savo jėgas?
+            </p>
           </div>
 
+          <!-- Gif -->
           <div
             class="absolute bottom-0 w-full flex justify-center overflow-hidden"
           >
@@ -61,8 +85,9 @@
       </div>
     </div>
 
+    <!-- Arrow icons -->
     <div
-      class="flex absolute top-1/2 transform -translate-y-1/2 z-30"
+      class="flex absolute top-1/2 transform -translate-y-1/2 z-30 ring-2 ring-white rounded-full hover:ring-blue-500 hover:scale-105 duration-700"
       :class="showLeftPanel ? 'left-panel-visible' : 'left-panel-hidden'"
       @click="toggleLeftPanel"
     >
@@ -73,23 +98,24 @@
             : '/welcome-page/right-arrow-blue.png'
         "
         alt="Toggle Sidebar"
-        class="cursor-pointer"
+        class="cursor-pointer p-2"
         :class="showLeftPanel ? 'rotate-0' : 'rotate-0'"
-        style="width: 48px; height: 48px"
+        style="width: 80px; height: 80px"
       />
     </div>
 
+    <!-- Right panel -->
     <div
       :class="[
         showLeftPanel ? 'w-2/4' : 'w-full',
-        'flex h-screen items-center justify-center bg-white p-12 relative',
+        'flex h-screen items-center justify-center bg-white p-12 relative z-10 transition-all ease-in-out duration-700',
       ]"
     >
       <div class="absolute top-0 left-0 m-8">
         <img
           src="@/static/shared/kvk-logo.svg"
           alt="Logo"
-          class="h-16 w-auto"
+          class="h-16 w-auto hover:scale-105 hover:cursor-pointer duration-300"
         />
       </div>
       <div class="absolute top-0 right-0 m-4">
@@ -107,7 +133,7 @@
             <input
               id="email"
               type="email"
-              class="w-full p-3 border border-gray-300 rounded-md shadow-sm"
+              class="w-full p-3 border border-gray-300 rounded-md shadow-sm hover:border-blue-500 transition-colors duration-200"
               required
             />
           </div>
@@ -120,16 +146,18 @@
             <input
               id="password"
               type="password"
-              class="w-full p-3 border border-gray-300 rounded-md shadow-sm"
+              class="w-full p-3 border border-gray-300 rounded-md shadow-sm hover:border-blue-500 transition-colors duration-200"
               required
             />
           </div>
           <div class="flex items-center justify-between mb-6">
-            <label class="flex items-center">
+            <label class="flex items-center duration-200">
               <input type="checkbox" class="form-checkbox h-5 w-5" />
               <span class="ml-2 text-sm text-gray-600">Įsiminti</span>
             </label>
-            <a href="#" class="text-sm text-blue-500 hover:text-blue-700"
+            <a
+              @click="showForgotPasswordModal"
+              class="cursor-pointer text-blue-500 hover:text-blue-700 font-semibold"
               >Pamiršote slaptažodį?</a
             >
           </div>
@@ -153,8 +181,14 @@
         </form>
       </div>
     </div>
+    <ForgotPasswordModal
+      v-if="showModal"
+      @close="showModal = false"
+      class="z-50"
+    />
   </div>
 </template>
+
 <style scoped>
 @keyframes bounce {
   0%,
@@ -164,6 +198,38 @@
   50% {
     transform: translateY(-20px);
   }
+}
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+.transition-width {
+  transition: width 0.7s ease;
+}
+
+.transition-transform {
+  transition: transform 0.5s ease;
+}
+
+.background-slide-in {
+  animation: slide-in 0.5s forwards;
+}
+
+.background-slide-out {
+  animation: slide-out 0.5s forwards;
 }
 
 .bounce {
@@ -273,11 +339,17 @@
   transform: rotate(180deg);
 }
 .left-panel-visible {
-  left: calc(50% - 64px);
+  left: calc(50% - 128px);
 }
 
 .left-panel-hidden {
   left: calc(0% + 20px);
+}
+.modal-open {
+  pointer-events: none;
+}
+.modal-open .modal {
+  pointer-events: auto;
 }
 </style>
 
@@ -285,12 +357,18 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import LanguageToggler from "@/components/nav/LanguageToggler.vue";
+import ForgotPasswordModal from "@/components/nav/ForgotPasswordModal.vue";
 
 const router = useRouter();
 const showLeftPanel = ref(true);
+const showModal = ref(false);
 
 const toggleLeftPanel = () => {
   showLeftPanel.value = !showLeftPanel.value;
+};
+
+const showForgotPasswordModal = () => {
+  showModal.value = true;
 };
 
 const goToAdmin = () => {

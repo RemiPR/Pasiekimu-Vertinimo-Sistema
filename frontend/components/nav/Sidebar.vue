@@ -65,23 +65,19 @@ function selectMenuItem(item) {
 </template>
 
 <style scoped>
-/* Scoped styles for sidebar */
-/* .bg-navbar {
-  background-color: #2c3e50; /* Adjust the color to match your navbar color */
-
 .bg-sidebarHoverBg {
-  background-color: #34495e; /* Slightly lighter than the navbar for hover */
+  background-color: #34495e;
 }
 
 .bg-sidebarFocusBg {
-  background-color: #2c3e50; /* Same as navbar or slightly different for focus */
+  background-color: #2c3e50;
 }
 
 .bg-sidebarActiveBg {
-  background-color: #1abc9c; /* A contrasting color for the active item */
+  background-color: #1abc9c;
 }
 
 .focus\:ring-sidebarRing {
-  box-shadow: 0 0 0 2px #1abc9c; /* Ring color for focus, similar to active item */
+  box-shadow: 0 0 0 2px #1abc9c;
 }
 </style>
