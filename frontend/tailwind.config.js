@@ -11,13 +11,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        navbar: "#286575",
+        // Admin dashboard
         navbarText: "#eff7f9",
-        dashboardBg: "#e0eef1",
+        dashboard: "rgba(20, 121, 255, 0.025)",
         dashboardBtn: "#2c6878",
+        strongBlue: "#0056b3",
       },
       fontFamily: {
         montserrat: ["Montserrat"],
+      },
+      // Custom shadow for icons in the sidebar
+      boxShadow: {
+        "icon-shadow":
+          "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)",
       },
     },
   },

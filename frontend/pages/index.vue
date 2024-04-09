@@ -131,6 +131,7 @@
               >Įveskite el. pašto adresą</label
             >
             <input
+              v-model="email"
               id="email"
               type="email"
               class="w-full p-3 border border-gray-300 rounded-md shadow-sm hover:border-blue-500 transition-colors duration-200"
@@ -144,6 +145,7 @@
               >Įveskite slaptažodį</label
             >
             <input
+              v-model="password"
               id="password"
               type="password"
               class="w-full p-3 border border-gray-300 rounded-md shadow-sm hover:border-blue-500 transition-colors duration-200"
@@ -162,7 +164,6 @@
             >
           </div>
           <button
-            @click="goToAdmin"
             type="submit"
             class="w-full p-3 bg-blue-500 text-white rounded-md font-semibold hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           >
@@ -235,13 +236,11 @@
 .bounce {
   display: inline-block;
   animation-name: bounce;
-  animation-duration: 0.5s; /* speed of each bounce */
-  animation-fill-mode: both; /* keep the view in the end state of the last keyframe when the animation is not running */
-  animation-iteration-count: 1; /* makes the animation repeat infinitely */
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
+  animation-iteration-count: 1;
 }
 
-/* Set the animation delay based on the index of the letter */
-/* and the duration of the animation for the full cycle */
 .bounce:nth-child(1) {
   animation-delay: 0s;
 }
@@ -323,12 +322,9 @@
 .bounce:nth-child(27) {
   animation-delay: 5.5s;
 }
-/* Set an animation interval */
-/* Total time for one full cycle of animation */
-/* This should be the sum of the individual animation duration (0.5s) and delays */
 .bounce {
-  animation-timing-function: linear; /* makes the animation proceed at an even pace */
-  animation-duration: 6s; /* the full duration for the cycle to complete */
+  animation-timing-function: linear;
+  animation-duration: 6s;
   animation-iteration-count: infinite;
 }
 .rotate-0 {
@@ -356,10 +352,13 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 import LanguageToggler from "@/components/nav/LanguageToggler.vue";
-import ForgotPasswordModal from "@/components/nav/ForgotPasswordModal.vue";
+import ForgotPasswordModal from "@/components/index/ForgotPasswordModal.vue";
 
 const router = useRouter();
+const email = ref("");
+const password = ref("");
 const showLeftPanel = ref(true);
 const showModal = ref(false);
 
@@ -371,7 +370,27 @@ const showForgotPasswordModal = () => {
   showModal.value = true;
 };
 
-const goToAdmin = () => {
-  router.push("/admin");
+// Inside your index.vue <script setup>
+const login = async () => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3001/api/auth/login",
+      {
+        email: email.value,
+        password: password.value,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    localStorage.setItem("token", response.data.token);
+    router.push("/admin");
+  } catch (error) {
+    console.error("Login failed:", error.response || error); // Log the error response
+    // Optionally display a user-friendly error message on the UI
+  }
 };
 </script>

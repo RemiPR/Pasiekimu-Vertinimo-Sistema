@@ -1,20 +1,41 @@
+<script setup>
+import { computed } from "vue";
+import Sidebar from "@/components/nav/Sidebar.vue";
+import LanguageToggler from "@/components/nav/LanguageToggler.vue";
+import { useSidebarStore } from "@/stores/sidebar";
+
+// Import view components
+import TestView from "@/components/admin-dashboard-content/TestView/TestView.vue";
+import LeaderboardView from "@/components/admin-dashboard-content/LeaderboardView.vue";
+import StatsView from "@/components/admin-dashboard-content/StatsView.vue";
+import Activity from "@/components/admin-dashboard-content/Activity.vue";
+import Welcome from "@/components/admin-dashboard-content/TestView/Welcome.vue";
+
+const store = useSidebarStore();
+const activeComponent = computed(() => {
+  const components = {
+    Testai: TestView,
+    "Top studentai": LeaderboardView,
+    Statistikos: StatsView,
+  };
+  return components[store.activeMenuItem];
+});
+</script>
+
 <template>
-  <div class="flex h-screen bg-dashboardBg">
-    <Sidebar />
-    <div class="flex flex-col flex-grow">
-      <LanguageToggler class="bg-dashboardBg" />
-      <main class="flex-grow overflow-auto">
-        <NuxtPage />
+  <div class="flex h-screen">
+    <Sidebar class="w-64 shadow-lg z-10" />
+    <div class="flex-1 flex flex-col overflow-hidden bg-dashboard">
+      <LanguageToggler class="p-3 z-10" />
+      <main class="flex-1 overflow-auto m-24">
+        <div class="flex space-x-8 items-start">
+          <div class="flex-auto bg-white rounded-lg shadow p-4">
+            <component :is="activeComponent" />
+          </div>
+          <Activity />
+          <Welcome />
+        </div>
       </main>
     </div>
   </div>
 </template>
-
-<script setup>
-import Sidebar from "@/components/nav/Sidebar.vue";
-import LanguageToggler from "@/components/nav/LanguageToggler.vue";
-</script>
-
-<style>
-/* Global styles if necessary */
-</style>
