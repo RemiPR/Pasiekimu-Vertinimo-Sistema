@@ -28,7 +28,7 @@ function selectMenuItem(item) {
 </script>
 
 <template>
-  <aside class="w-64 h-full" aria-label="Sidebar">
+  <aside class="w-64 min-h-screen sticky top-0" aria-label="Sidebar">
     <div class="flex justify-center px-4 py-8">
       <img
         src="@/static/shared/kvk-logo.svg"

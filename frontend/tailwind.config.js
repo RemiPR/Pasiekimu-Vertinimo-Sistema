@@ -13,7 +13,7 @@ export default {
       colors: {
         // Admin dashboard
         navbarText: "#eff7f9",
-        dashboard: "rgba(20, 121, 255, 0.025)",
+        dashboard: "rgba(20, 121, 255, 0.03)",
         dashboardBtn: "#2c6878",
         strongBlue: "#0056b3",
       },

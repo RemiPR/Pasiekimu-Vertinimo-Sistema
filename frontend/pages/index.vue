@@ -355,6 +355,7 @@ import { useRouter } from "vue-router";
 import axios from "axios";
 import LanguageToggler from "@/components/nav/LanguageToggler.vue";
 import ForgotPasswordModal from "@/components/index/ForgotPasswordModal.vue";
+import { useAuthStore } from "../stores/auth";
 
 const router = useRouter();
 const email = ref("");
@@ -370,27 +371,24 @@ const showForgotPasswordModal = () => {
   showModal.value = true;
 };
 
-// Inside your index.vue <script setup>
 const login = async () => {
   try {
-    const response = await axios.post(
-      "http://localhost:3001/api/auth/login",
-      {
-        email: email.value,
-        password: password.value,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.post("http://localhost:3001/api/auth/login", {
+      email: email.value,
+      password: password.value,
+    });
 
+    // This should work since you confirmed getting the token in the response
     localStorage.setItem("token", response.data.token);
+
+    const authStore = useAuthStore();
+    authStore.authenticate(true);
+
+    // Redirect to the admin page
     router.push("/admin");
   } catch (error) {
-    console.error("Login failed:", error.response || error); // Log the error response
-    // Optionally display a user-friendly error message on the UI
+    // Handle error, such as showing a message to the user
+    console.error("Login failed:", error.response.data || error.message);
   }
 };
 </script>

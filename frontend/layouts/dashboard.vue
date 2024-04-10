@@ -25,11 +25,11 @@ const activeComponent = computed(() => {
 <template>
   <div class="flex h-screen">
     <Sidebar class="w-64 shadow-lg z-10" />
-    <div class="flex-1 flex flex-col overflow-hidden bg-dashboard">
+    <div class="flex-1 flex flex-col overflow-auto bg-dashboard min-h-screen">
       <LanguageToggler class="p-3 z-10" />
-      <main class="flex-1 overflow-auto m-24">
-        <div class="flex space-x-8 items-start">
-          <div class="flex-auto bg-white rounded-lg shadow p-4">
+      <main class="flex-1 my-20 mx-12">
+        <div class="flex space-x-6 items-start">
+          <div class="flex-auto bg-white rounded-lg border shadow-lg p-4">
             <component :is="activeComponent" />
           </div>
           <Activity />

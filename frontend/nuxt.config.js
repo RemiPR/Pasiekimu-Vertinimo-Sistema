@@ -8,11 +8,12 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  plugins: ["~/plugins/pinia.js"],
+  plugins: ["~/plugins/pinia.js", { src: "~/plugins/auth.js", mode: "client" }],
   modules: ["@nuxtjs/i18n"],
   i18n: {
     // configuration
   },
+  buildModules: ["@pinia/nuxt"],
   head: {
     link: [
       {
