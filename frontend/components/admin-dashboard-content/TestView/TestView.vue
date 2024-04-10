@@ -347,8 +347,7 @@ export default {
       currentTestName: "",
       isLoading: false,
       hasMoreItems: true,
-      page: 1,
-      pageSize: 10,
+      originalItems: [],
     };
   },
 
@@ -368,8 +367,39 @@ export default {
 
   methods: {
     filterTests() {
-      // Your search filtering logic here
+      const searchLower = this.searchQuery.toLowerCase();
+
+      if (!this.searchQuery.trim()) {
+        this.fetchItems();
+      } else {
+        this.items = this.originalItems.filter((item) => {
+          const formattedDate = this.formatDateForComparison(item.date);
+          // Convert timeLimit to string and include it in the comparison
+          const timeLimitStr = item.timeLimit.toString().toLowerCase();
+
+          return (
+            item.name.toLowerCase().includes(searchLower) ||
+            item.group.toLowerCase().includes(searchLower) ||
+            item.questions.toString().toLowerCase().includes(searchLower) ||
+            formattedDate.includes(searchLower) ||
+            timeLimitStr.includes(searchLower)
+          );
+        });
+      }
     },
+
+    formatDateForComparison(date) {
+      const d = new Date(date);
+      let month = "" + (d.getMonth() + 1),
+        day = "" + d.getDate(),
+        year = d.getFullYear();
+
+      if (month.length < 2) month = "0" + month;
+      if (day.length < 2) day = "0" + day;
+
+      return [year, month, day].join("-");
+    },
+
     toggleExpand(index) {
       this.$set(this.expand, index, !this.expand[index]);
     },
@@ -414,8 +444,9 @@ export default {
       }
     },
     formatDate(date) {
-      return new Date(date).toLocaleDateString();
+      return this.formatDateForComparison(date);
     },
+
     expandUrl(index) {
       this.$set(this.expandedUrls, index, true);
     },
@@ -427,6 +458,7 @@ export default {
       try {
         const response = await fetch(`http://localhost:3001/api/tests`);
         const data = await response.json();
+        this.originalItems = data;
         this.items = data;
       } catch (error) {
         console.error("Failed to fetch items:", error);
