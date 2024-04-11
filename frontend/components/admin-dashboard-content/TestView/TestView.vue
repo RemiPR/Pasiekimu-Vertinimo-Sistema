@@ -232,13 +232,17 @@
             <td
               class="py-6 px-4 border-b border-gray-200 group-hover:text-blue-500"
             >
-              <button class="flex items-center space-x-2">
+              <NuxtLink
+                :to="`/tests/${item._id}`"
+                class="flex items-center space-x-2"
+              >
                 <DocumentIcon
                   class="h-5 w-5 text-gray-500 group-hover:text-blue-500"
                 />
                 <span>{{ item.name }}</span>
-              </button>
+              </NuxtLink>
             </td>
+
             <td class="py-2 px-4 border-b border-gray-200 relative">
               <div
                 class="truncate max-w-48 hover:max-w-full hover:whitespace-normal"

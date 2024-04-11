@@ -10,7 +10,20 @@ router.get("/", (req, res) => {
     .then((tests) => res.json(tests))
     .catch((err) => res.status(404).json({ notestsfound: "No tests found" }));
 });
-
+router.get("/:id", (req, res) => {
+  Test.findById(req.params.id)
+    .then((test) => {
+      if (!test) {
+        return res
+          .status(404)
+          .json({ notestfound: "No test found with that ID" });
+      }
+      res.json(test);
+    })
+    .catch((err) =>
+      res.status(500).json({ error: "Error fetching test by ID" })
+    );
+});
 router.delete("/:id", (req, res) => {
   Test.findByIdAndDelete(req.params.id)
     .then((test) => {
