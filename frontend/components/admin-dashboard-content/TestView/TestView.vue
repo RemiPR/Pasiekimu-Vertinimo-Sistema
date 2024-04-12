@@ -231,16 +231,14 @@
 
             <td
               class="py-6 px-4 border-b border-gray-200 group-hover:text-blue-500"
+              @click="handleTestClick(item)"
             >
-              <NuxtLink
-                :to="`/tests/${item._id}`"
-                class="flex items-center space-x-2"
-              >
+              <span class="flex items-center space-x-2 cursor-pointer">
                 <DocumentIcon
                   class="h-5 w-5 text-gray-500 group-hover:text-blue-500"
                 />
                 <span>{{ item.name }}</span>
-              </NuxtLink>
+              </span>
             </td>
 
             <td class="py-2 px-4 border-b border-gray-200 relative">
@@ -327,6 +325,7 @@ import {
   LinkIcon,
   XMarkIcon,
 } from "@heroicons/vue/24/outline";
+import { useSidebarStore } from "@/stores/sidebar";
 
 export default {
   components: {
@@ -391,7 +390,10 @@ export default {
         });
       }
     },
-
+    handleTestClick(test) {
+      const sidebarStore = useSidebarStore();
+      sidebarStore.selectTest(test); // This will set the currentTest and showTestDetails in the store
+    },
     formatDateForComparison(date) {
       const d = new Date(date);
       let month = "" + (d.getMonth() + 1),
@@ -468,7 +470,20 @@ export default {
         console.error("Failed to fetch items:", error);
       }
     },
-
+    async selectTest(testId) {
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/tests/${testId}`
+        );
+        const detailedTest = await response.json();
+        if (detailedTest) {
+          this.currentTest = detailedTest; // Assuming `currentTest` is reactive
+          this.showTestDetails = true; // Show TestDetails component
+        }
+      } catch (error) {
+        console.error("Failed to fetch test details:", error);
+      }
+    },
     promptDeleteTest(testId, testName) {
       this.currentTestId = testId;
       this.currentTestName = testName;
