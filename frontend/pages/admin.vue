@@ -1,3 +1,7 @@
+<template>
+  <NuxtLayout></NuxtLayout>
+</template>
+
 <script setup>
 import { onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
@@ -18,7 +22,3 @@ onBeforeMount(() => {
   // Further token validation logic can be added here if needed
 });
 </script>
-
-<template>
-  <NuxtLayout />
-</template>

@@ -8,12 +8,9 @@
         class="testai-link flex items-center gap-2"
       >
         <span class="icon">🔙</span>
-        <!-- Replace with an actual icon -->
         <span>Testai ></span>
         <span class="font-bold">{{ test.name }}</span>
       </button>
-
-      <pre>{{ test }}</pre>
 
       <div class="flex items-center">
         <div class="relative mr-6">
@@ -35,31 +32,35 @@
 
     <!-- Individual test content -->
     <div class="test-content">
-      <div
-        v-for="(question, index) in test.questions"
-        :key="question._id"
-        class="mb-4 p-4 border rounded shadow"
+      <draggable
+        v-model="state.testDetails.questions"
+        @end="onEndDragQuestion"
+        tag="ul"
       >
-        <h3 class="text-lg font-semibold">
-          Question {{ index + 1 }}: {{ question.text }}
-        </h3>
-        <ul>
-          <li
-            v-for="(answer, aIndex) in question.answers"
-            :key="aIndex"
-            class="mt-2"
-          >
-            <label>
-              <input
-                type="checkbox"
-                v-model="answer.correct"
-                :disabled="true"
-              />
-              {{ answer.text }}
-            </label>
+        <template v-slot:item="{ element, index }">
+          <li :key="element._id" class="question">
+            <h3 class="text-lg font-semibold">
+              Question {{ index + 1 }}: {{ element.text }}
+            </h3>
+            <ul>
+              <li
+                v-for="(answer, aIndex) in element.answers"
+                :key="aIndex"
+                class="mt-2"
+              >
+                <label>
+                  <input
+                    type="checkbox"
+                    v-model="answer.correct"
+                    :disabled="true"
+                  />
+                  {{ answer.text }}
+                </label>
+              </li>
+            </ul>
           </li>
-        </ul>
-      </div>
+        </template>
+      </draggable>
     </div>
     <!-- Comfirm Delete test modal -->
     <div
@@ -93,9 +94,10 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from "vue";
+import draggable from "vuedraggable";
+import { defineComponent, ref, computed, reactive } from "vue";
 import { useSidebarStore } from "@/stores/sidebar";
-import { MagnifyingGlassIcon } from "@heroicons/vue/24/outline"; // Ensure this import if you use it in the template
+import { MagnifyingGlassIcon } from "@heroicons/vue/24/outline";
 
 export default defineComponent({
   props: {
@@ -106,58 +108,187 @@ export default defineComponent({
   },
   components: {
     MagnifyingGlassIcon,
+    draggable,
   },
   setup(props) {
     const sidebarStore = useSidebarStore();
-    // const searchQuery = ref("");
-    // const showDeleteConfirmation = ref(false);
+    const state = reactive({
+      searchQuery: "",
+      showDeleteConfirmation: false,
+      // The following line is necessary to make a deep reactive copy of the test prop
+      testDetails: JSON.parse(JSON.stringify(props.test)),
+    });
 
-    // Example of adding and removing questions, add methods accordingly
     const filteredQuestions = computed(() => {
-      return props.test.questions.filter((q) =>
-        q.text.includes(searchQuery.value)
+      return state.testDetails.questions.filter((q) =>
+        q.text.toLowerCase().includes(state.searchQuery.toLowerCase())
       );
     });
 
-    function backToTestList() {
+    const backToTestList = () => {
       sidebarStore.clearTest();
-    }
+    };
 
-    function addQuestion() {
-      // Implement adding a question
-    }
+    const addQuestion = async () => {
+      const newQuestionData = {
+        text: "Your new question text",
+        answers: [{ text: "Answer 1", correct: true }],
+      };
 
-    function removeQuestion(index) {
-      // Implement removing a question
-    }
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/tests/${state.testDetails._id}/questions`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newQuestionData),
+          }
+        );
 
-    function addAnswer(questionIndex) {
-      // Implement adding an answer to a specific question
-    }
+        const addedQuestion = await response.json();
 
-    function removeAnswer(questionIndex, answerIndex) {
-      // Implement removing an answer
-    }
+        if (!response.ok) throw new Error(addedQuestion.message);
 
-    function confirmDelete() {
-      // Implement deletion confirmation logic
-    }
+        state.testDetails.questions.push(addedQuestion);
+      } catch (error) {
+        console.error(
+          "There has been a problem with your fetch operation:",
+          error
+        );
+      }
+    };
 
-    function cancelDelete() {
-      showDeleteConfirmation.value = false;
-    }
+    const removeQuestion = async (questionId) => {
+      if (!confirm("Are you sure you want to delete this question?")) return;
+
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/tests/${state.testDetails._id}/questions/${questionId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!response.ok) throw new Error("Network response was not ok.");
+
+        // Assuming the backend sends back the ID of the deleted question
+        const { deletedQuestionId } = await response.json();
+        state.testDetails.questions = state.testDetails.questions.filter(
+          (q) => q._id !== deletedQuestionId
+        );
+      } catch (error) {
+        console.error(
+          "There has been a problem with your fetch operation:",
+          error
+        );
+      }
+    };
+
+    const addAnswer = async (questionId) => {
+      const newAnswerData = {
+        text: "New answer text",
+        correct: false,
+      };
+
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/tests/${state.testDetails._id}/questions/${questionId}/answers`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newAnswerData),
+          }
+        );
+
+        if (!response.ok) throw new Error("Network response was not ok.");
+
+        const { updatedQuestion } = await response.json();
+        const questionIndex = state.testDetails.questions.findIndex(
+          (q) => q._id === questionId
+        );
+        if (questionIndex !== -1) {
+          state.testDetails.questions[questionIndex] = updatedQuestion;
+        }
+      } catch (error) {
+        console.error(
+          "There has been a problem with your fetch operation:",
+          error
+        );
+      }
+    };
+
+    const removeAnswer = async (questionId, answerId) => {
+      if (!confirm("Are you sure you want to delete this answer?")) return;
+
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/tests/${state.testDetails._id}/questions/${questionId}/answers/${answerId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!response.ok) throw new Error("Network response was not ok.");
+
+        // Assuming the backend sends back the ID of the deleted answer
+        const { deletedAnswerId } = await response.json();
+        const questionIndex = state.testDetails.questions.findIndex(
+          (q) => q._id === questionId
+        );
+        if (questionIndex !== -1) {
+          state.testDetails.questions[questionIndex].answers =
+            state.testDetails.questions[questionIndex].answers.filter(
+              (a) => a._id !== deletedAnswerId
+            );
+        }
+      } catch (error) {
+        console.error(
+          "There has been a problem with your fetch operation:",
+          error
+        );
+      }
+    };
+
+    const onEndDragQuestion = async () => {
+      // Get the order of question IDs after drag-and-drop
+      const orderedQuestionIds = state.testDetails.questions.map((q) => q._id);
+
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/tests/${state.testDetails._id}/questions/order`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ orderedQuestionIds }),
+          }
+        );
+
+        if (!response.ok) throw new Error("Network response was not ok.");
+
+        console.log("Questions reordered successfully on the server.");
+      } catch (error) {
+        console.error(
+          "There has been a problem with your fetch operation:",
+          error
+        );
+      }
+    };
 
     return {
+      state,
       backToTestList,
-      // searchQuery,
-      // showDeleteConfirmation,
-      // filteredQuestions,
+      filteredQuestions,
       addQuestion,
       removeQuestion,
       addAnswer,
       removeAnswer,
-      confirmDelete,
-      cancelDelete,
+      onEndDragQuestion,
     };
   },
 });

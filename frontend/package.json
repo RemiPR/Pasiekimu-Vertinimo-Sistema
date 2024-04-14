@@ -17,7 +17,8 @@
     "axios": "^1.6.8",
     "nuxt": "^3.10.1",
     "pinia": "^2.1.7",
-    "vue": "^3.4.15"
+    "vue": "^3.4.15",
+    "vuedraggable": "^2.24.3"
   },
   "author": "",
   "license": "ISC",

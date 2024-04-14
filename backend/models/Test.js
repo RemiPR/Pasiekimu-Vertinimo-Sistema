@@ -12,7 +12,17 @@ const TestSchema = new Schema({
     type: String,
     required: true,
   },
-  questions: Number,
+  questions: [
+    {
+      text: String,
+      answers: [
+        {
+          text: String,
+          correct: Boolean,
+        },
+      ],
+    },
+  ],
   group: String,
   timeLimit: String,
   date: {

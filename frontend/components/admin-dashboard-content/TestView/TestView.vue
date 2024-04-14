@@ -253,7 +253,7 @@
             <td
               class="py-2 px-4 border-b border-gray-200 group-hover:text-blue-500"
             >
-              {{ item.questions }}
+              {{ item.questionCount }}
             </td>
             <td
               class="py-2 px-4 border-b border-gray-200 group-hover:text-blue-500"
@@ -464,8 +464,13 @@ export default {
       try {
         const response = await fetch(`http://localhost:3001/api/tests`);
         const data = await response.json();
-        this.originalItems = data;
-        this.items = data;
+        // Add a question count to each test item
+        const itemsWithQuestionCount = data.map((test) => ({
+          ...test,
+          questionCount: test.questions ? test.questions.length : 0, // Counting questions if they exist
+        }));
+        this.originalItems = itemsWithQuestionCount;
+        this.items = itemsWithQuestionCount;
       } catch (error) {
         console.error("Failed to fetch items:", error);
       }

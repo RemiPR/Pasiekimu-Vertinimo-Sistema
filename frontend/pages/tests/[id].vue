@@ -1,13 +1,16 @@
 <template>
-  <div v-if="error">
-    <p>Error fetching test details: {{ error.message }}</p>
-  </div>
-  <div v-else-if="!test">
-    <p>Loading...</p>
-  </div>
-  <div v-else>
-    <h1>{{ test.name }}</h1>
-    <!-- Display other details of the test here -->
+  <div>
+    <div v-if="error">
+      <p>Error fetching test details: {{ error.message }}</p>
+    </div>
+    <div v-else-if="!test">
+      <p>Loading...</p>
+    </div>
+    <div v-else>
+      <h1>{{ test.name }}</h1>
+      <!-- Display other details of the test here -->
+      <p>123</p>
+    </div>
   </div>
 </template>
 

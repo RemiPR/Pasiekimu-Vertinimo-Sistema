@@ -1,32 +1,3 @@
-<script setup>
-import { useSidebarStore } from "@/stores/sidebar";
-import {
-  DocumentIcon,
-  TrophyIcon,
-  ChartBarIcon,
-} from "@heroicons/vue/24/outline";
-
-const sidebarStore = useSidebarStore();
-const menuItems = [
-  {
-    text: "Testai",
-    icon: DocumentIcon,
-  },
-  {
-    text: "Top studentai",
-    icon: TrophyIcon,
-  },
-  {
-    text: "Statistikos",
-    icon: ChartBarIcon,
-  },
-];
-
-function selectMenuItem(item) {
-  sidebarStore.setActiveMenuItem(item.text);
-}
-</script>
-
 <template>
   <aside class="w-64 min-h-screen sticky top-0" aria-label="Sidebar">
     <div class="flex justify-center px-4 py-8">
@@ -83,4 +54,32 @@ function selectMenuItem(item) {
   </aside>
 </template>
 
+<script setup>
+import { useSidebarStore } from "@/stores/sidebar";
+import {
+  DocumentIcon,
+  TrophyIcon,
+  ChartBarIcon,
+} from "@heroicons/vue/24/outline";
+
+const sidebarStore = useSidebarStore();
+const menuItems = [
+  {
+    text: "Testai",
+    icon: DocumentIcon,
+  },
+  {
+    text: "Top studentai",
+    icon: TrophyIcon,
+  },
+  {
+    text: "Statistikos",
+    icon: ChartBarIcon,
+  },
+];
+
+function selectMenuItem(item) {
+  sidebarStore.setActiveMenuItem(item.text);
+}
+</script>
 <style scoped></style>
