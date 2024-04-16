@@ -6,31 +6,23 @@ const bodyParser = require("body-parser");
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3001; // Fallback to port 3001 if PORT isn't in .env
 
 const authRoutes = require("./routes/auth");
-const Tests = require("./models/Test");
-
 const testsRoute = require("./routes/tests");
 
 app.use(express.json());
-
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3000", // This is your Nuxt.js frontend
     credentials: true,
   })
 );
 app.use(bodyParser.json());
 
+// Routes
 app.use("/api/auth", authRoutes);
-
-app.use("/api/tests", testsRoute);
-app.get("/api/test", (req, res) => {
-  Test.find()
-    .sort({ date: -1 })
-    .then((tests) => res.json(tests));
-});
+app.use("/api/tests", testsRoute); // All test-related API calls should be in here
 
 mongoose
   .connect(process.env.MONGODB_URI, {})

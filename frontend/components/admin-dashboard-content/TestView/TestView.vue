@@ -283,33 +283,33 @@
         </tbody>
       </table>
     </div>
-  </div>
 
-  <!-- Comfirm Delete test modal -->
-  <div
-    v-if="showDeleteConfirmation"
-    class="fixed inset-0 z-50 bg-gray-900 bg-opacity-50 flex justify-center items-center"
-  >
-    <div class="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
-      <h2 class="text-xl font-semibold mb-4">Patvirtinti ištrynimą</h2>
-      <p class="mb-6">
-        Ar jūs tikrai norite ištrinti testą:
-        <strong>{{ currentTestName }}</strong
-        >?
-      </p>
-      <div class="flex justify-end space-x-4">
-        <button
-          @click="cancelDelete"
-          class="px-5 py-2 text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300"
-        >
-          Atšaukti
-        </button>
-        <button
-          @click="confirmDelete"
-          class="px-5 py-2 text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600"
-        >
-          Ištrinti
-        </button>
+    <!-- Comfirm Delete test modal -->
+    <div
+      v-if="showDeleteConfirmation"
+      class="fixed inset-0 z-50 bg-gray-900 bg-opacity-50 flex justify-center items-center"
+    >
+      <div class="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
+        <h2 class="text-xl font-semibold mb-4">Patvirtinti ištrynimą</h2>
+        <p class="mb-6">
+          Ar jūs tikrai norite ištrinti testą:
+          <strong>{{ currentTestName }}</strong
+          >?
+        </p>
+        <div class="flex justify-end space-x-4">
+          <button
+            @click="cancelDelete"
+            class="px-5 py-2 text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300"
+          >
+            Atšaukti
+          </button>
+          <button
+            @click="confirmDelete"
+            class="px-5 py-2 text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600"
+          >
+            Ištrinti
+          </button>
+        </div>
       </div>
     </div>
   </div>

@@ -77,6 +77,7 @@ router.delete("/:testId/questions/:questionId", (req, res) => {
 // POST endpoint to add an answer to a specific question in a test
 // Assuming questions are subdocuments and not referenced
 router.post("/:testId/questions/:questionId/answers", (req, res) => {
+  console.log(req.body);
   const { testId, questionId } = req.params;
   const { answer } = req.body;
 
@@ -108,7 +109,10 @@ router.delete(
     const { testId, questionId, answerId } = req.params;
 
     Test.findById(testId, (err, test) => {
-      if (err) return res.status(500).json({ error: err.message });
+      if (err) {
+        console.error("Error finding test:", err);
+        return res.status(500).json({ error: err.message });
+      }
       if (!test)
         return res
           .status(404)
@@ -128,29 +132,76 @@ router.delete(
     });
   }
 );
+// Update question
+router.put("/:testId/questions/:questionId", async (req, res) => {
+  const { testId, questionId } = req.params;
+  const { text, answers } = req.body;
 
-// PUT endpoint to update the order of questions
-router.put("/:id/questions/order", (req, res) => {
-  const { id } = req.params;
-  const { questionsOrder } = req.body; // Expect an array of question IDs in the new order
-
-  Test.findById(id, (err, test) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!test)
+  try {
+    const test = await Test.findById(testId);
+    if (!test) {
       return res
         .status(404)
         .json({ notestfound: "No test found with that ID" });
+    }
 
-    // Reorder questions array based on questionsOrder
-    test.questions = questionsOrder.map((questionId) => {
-      return test.questions.find((q) => q._id.equals(questionId));
-    });
+    const question = test.questions.id(questionId);
+    if (!question) {
+      return res
+        .status(404)
+        .json({ noquestionfound: "No question found with that ID" });
+    }
 
-    test
-      .save()
-      .then((updatedTest) => res.json(updatedTest))
-      .catch((saveErr) => res.status(500).json({ error: saveErr.message }));
-  });
+    question.text = text;
+    question.answers = answers;
+    await test.save();
+
+    res.json(test);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
+
+// Update answer
+router.put(
+  "/:testId/questions/:questionId/answers/:answerId",
+  async (req, res) => {
+    const { testId, questionId, answerId } = req.params;
+    const { text, correct } = req.body; // Destructure the properties directly if they are sent as separate fields
+
+    try {
+      const test = await Test.findOne({
+        _id: testId,
+        "questions._id": questionId,
+      });
+
+      if (!test) {
+        return res
+          .status(404)
+          .json({ notestfound: "No test found with that ID" });
+      }
+
+      const question = test.questions.id(questionId);
+      const answerToUpdate = question.answers.id(answerId);
+
+      if (!answerToUpdate) {
+        return res
+          .status(404)
+          .json({ noanswerfound: "No answer found with that ID" });
+      }
+
+      // Update the fields directly
+      answerToUpdate.text = text;
+      answerToUpdate.correct = correct;
+
+      await test.save(); // Save the whole test document
+      res.json(test);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+);
 
 module.exports = router;
