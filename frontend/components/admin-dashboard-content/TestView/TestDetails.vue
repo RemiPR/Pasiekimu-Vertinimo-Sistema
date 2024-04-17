@@ -140,12 +140,12 @@
           </div>
         </div>
         <!-- Sticky Add Question Button -->
-        <div class="sticky bottom-0 bg-blue-500 shadow-inner">
+        <div class="w-64 sticky bottom-0 bg-blue-500 shadow-inner">
           <button
             @click="addQuestion"
-            class="w-full text-white text-md font-bold py-3 rounded-md transition duration-200 ease-in-out hover:bg-blue-600 hover:shadow-lg"
+            class="mx-auto w-full text-white text-md font-bold py-3 rounded-md transition duration-200 ease-in-out hover:bg-blue-600 hover:shadow-lg"
           >
-            Add question +
+            Pridėta naują klausimą +
           </button>
         </div>
       </draggable>
@@ -245,7 +245,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      document.querySelectorAll("textarea").forEach(autosize);
+      console.log("Initial questions data:", state.testDetails.questions);
     });
 
     const saveQuestion = async (question) => {
@@ -259,6 +259,71 @@ export default defineComponent({
         );
       } catch (error) {
         console.error("Failed to save question:", error);
+      }
+    };
+    const addQuestion = async () => {
+      const newQuestion = {
+        text: "Naujas klausimas", // Initialize with empty text so the user can input their question
+        answers: [], // Start with an empty array of answers
+      };
+
+      try {
+        // Assuming '/api/tests/:testId/questions' is the endpoint for adding a new question
+        const response = await fetch(
+          `http://localhost:3001/api/tests/${state.testDetails._id}/questions`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newQuestion),
+          }
+        );
+
+        // Once the new question is successfully created, add it to the local state
+        const data = await response.json();
+        if (response.ok && data && data._id) {
+          state.testDetails.questions.push(data);
+        } else {
+          console.error(
+            "No data returned from the server after adding question",
+            data
+          );
+        }
+      } catch (error) {
+        console.error("Failed to add question:", error);
+      }
+    };
+
+    const addAnswer = async (question) => {
+      const newAnswer = {
+        text: "123", // Default answer text
+        correct: false, // Default to incorrect
+      };
+
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/tests/${state.testDetails._id}/questions/${question._id}/answers`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newAnswer),
+          }
+        );
+
+        const data = await response.json();
+        if (!response.ok)
+          throw new Error("Failed to create answer: " + JSON.stringify(data));
+
+        if (data && data._id) {
+          question.answers.push(data); // Ensures the frontend state is updated with the new answer
+        } else {
+          console.error("No data returned from the server after adding answer");
+        }
+      } catch (error) {
+        console.error("Failed to add answer:", error);
       }
     };
 
@@ -396,8 +461,8 @@ export default defineComponent({
         answer.correct = !newCorrectValue;
       }
     };
-    watch(test, (newValue) => {
-      state.testDetails = { ...newValue };
+    watch(state.testDetails.questions, (newQuestions) => {
+      console.log("Updated questions data:", newQuestions);
     });
 
     return {
@@ -414,6 +479,8 @@ export default defineComponent({
       cancelDelete,
       performDelete,
       toggleCorrectAnswer,
+      addAnswer,
+      addQuestion,
     };
   },
 });

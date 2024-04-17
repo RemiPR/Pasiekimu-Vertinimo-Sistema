@@ -40,25 +40,37 @@ router.delete("/:id", (req, res) => {
     });
 });
 
-// Assuming your Question and Answer are subdocuments of the Test model
 // POST endpoint to add a question to a test
-router.post("/:id/questions", (req, res) => {
-  const { id } = req.params;
-  const { question } = req.body;
-
-  Test.findById(id, (err, test) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!test)
+router.post("/:testId/questions", async (req, res) => {
+  try {
+    const test = await Test.findById(req.params.testId);
+    if (!test) {
       return res
         .status(404)
         .json({ notestfound: "No test found with that ID" });
+    }
 
-    test.questions.push(question); // Push the new question into the questions array
-    test
-      .save()
-      .then((updatedTest) => res.json(updatedTest))
-      .catch((saveErr) => res.status(500).json({ error: saveErr.message }));
-  });
+    // Push the new question data into the test's questions array
+    const newQuestion = test.questions.create({
+      text: req.body.text,
+      answers: req.body.answers, // Initially, this will be an empty array
+    });
+
+    test.questions.push(newQuestion);
+    const savedTest = await test.save();
+
+    // Return the newly added question subdocument with its generated _id
+    const addedQuestion = savedTest.questions.find((q) =>
+      q._id.equals(newQuestion._id)
+    );
+    if (!addedQuestion) {
+      throw new Error("Newly added question not found after save.");
+    }
+    res.json(addedQuestion);
+  } catch (err) {
+    console.error("Error on adding question:", err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 // DELETE endpoint to remove a question from a test
@@ -76,30 +88,36 @@ router.delete("/:testId/questions/:questionId", (req, res) => {
 
 // POST endpoint to add an answer to a specific question in a test
 // Assuming questions are subdocuments and not referenced
-router.post("/:testId/questions/:questionId/answers", (req, res) => {
-  console.log(req.body);
-  const { testId, questionId } = req.params;
-  const { answer } = req.body;
-
-  Test.findById(testId, (err, test) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!test)
+router.post("/:testId/questions/:questionId/answers", async (req, res) => {
+  try {
+    const test = await Test.findById(req.params.testId);
+    if (!test) {
       return res
         .status(404)
         .json({ notestfound: "No test found with that ID" });
+    }
 
-    const question = test.questions.id(questionId);
-    if (!question)
+    const question = test.questions.id(req.params.questionId);
+    if (!question) {
       return res
         .status(404)
         .json({ noquestionfound: "No question found with that ID" });
+    }
 
-    question.answers.push(answer);
-    test
-      .save()
-      .then((updatedTest) => res.json(updatedTest))
-      .catch((saveErr) => res.status(500).json({ error: saveErr.message }));
-  });
+    const newAnswer = { text: req.body.text, correct: req.body.correct }; // Ensure the new answer is constructed correctly
+    question.answers.push(newAnswer);
+    await test.save();
+
+    // Since `question.answers.pop()` might not be reliable, use another method to get the last added answer
+    const addedAnswer = question.answers[question.answers.length - 1];
+    if (!addedAnswer) {
+      return res.status(500).json({ error: "Failed to add new answer" });
+    }
+    res.json(addedAnswer); // Send back the newly added answer object
+  } catch (err) {
+    console.error("Error on adding answer:", err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 // DELETE endpoint to remove an answer from a question
@@ -132,6 +150,7 @@ router.delete(
     });
   }
 );
+
 // Update question
 router.put("/:testId/questions/:questionId", async (req, res) => {
   const { testId, questionId } = req.params;
@@ -203,5 +222,22 @@ router.put(
     }
   }
 );
+
+// Create completely new test from scratch
+router.post("/", async (req, res) => {
+  try {
+    const newTest = new Test({
+      name: req.body.name,
+      url: req.body.url,
+    });
+
+    const savedTest = await newTest.save();
+    console.log("New test created:", savedTest); // Logging the saved test
+    res.json(savedTest);
+  } catch (err) {
+    console.error("Error on creating new test:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 module.exports = router;

@@ -1,13 +1,13 @@
-// stores/sidebar.js
 import { defineStore } from "pinia";
 import TestView from "@/components/admin-dashboard-content/TestView/TestView.vue";
 import LeaderboardView from "@/components/admin-dashboard-content/LeaderboardView.vue";
 import StatsView from "@/components/admin-dashboard-content/StatsView.vue";
-import TestDetails from "@/components/admin-dashboard-content/TestView/TestDetails.vue"; // Import your TestDetails component
+import TestDetails from "@/components/admin-dashboard-content/TestView/TestDetails.vue";
 
+// stores/sidebar.js
 export const useSidebarStore = defineStore("sidebar", {
   state: () => ({
-    activeMenuItem: "Testai", // Default active menu item
+    activeMenuItem: "Testai", // This should show 'TestView' initially
     currentTest: null,
     showTestDetails: false,
     menuItemComponents: {
@@ -22,8 +22,8 @@ export const useSidebarStore = defineStore("sidebar", {
       this.currentTest = null;
       this.showTestDetails = false;
     },
-    selectTest(test) {
-      this.currentTest = test;
+    selectTest(testId) {
+      this.currentTest = testId;
       this.showTestDetails = true;
     },
     clearTest() {
@@ -33,18 +33,10 @@ export const useSidebarStore = defineStore("sidebar", {
   },
   getters: {
     activeComponent: (state) => {
-      // Return the component objects instead of strings
-      const componentMap = {
-        Testai: TestView,
-        "Top studentai": LeaderboardView,
-        Statistikos: StatsView,
-        TestDetails: TestDetails, // Make sure to map this correctly
-      };
-      if (state.showTestDetails) {
-        return TestDetails; // Directly return the imported component object
-      } else {
-        return componentMap[state.activeMenuItem];
-      }
+      const componentName = state.showTestDetails
+        ? "TestDetails"
+        : state.menuItemComponents[state.activeMenuItem];
+      return componentName;
     },
   },
 });

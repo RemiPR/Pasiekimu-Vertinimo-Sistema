@@ -6,7 +6,6 @@
       <main class="flex-1 my-20 mx-12">
         <div class="flex space-x-6 items-start">
           <div class="flex-auto bg-white rounded-lg border shadow-lg p-4">
-            <!-- Ensure that activeComponent returns a string that matches the registered component name -->
             <component
               :is="activeComponent"
               :test="store.currentTest"
@@ -14,7 +13,6 @@
             />
           </div>
           <Activity />
-          <Welcome />
         </div>
       </main>
     </div>
@@ -26,10 +24,18 @@ import { computed } from "vue";
 import Sidebar from "@/components/nav/Sidebar.vue";
 import LanguageToggler from "@/components/nav/LanguageToggler.vue";
 import Activity from "@/components/admin-dashboard-content/Activity.vue";
-import Welcome from "@/components/admin-dashboard-content/TestView/Welcome.vue";
 import TestView from "@/components/admin-dashboard-content/TestView/TestView.vue";
+import TestDetails from "@/components/admin-dashboard-content/TestView/TestDetails.vue";
+import LeaderboardView from "@/components/admin-dashboard-content/LeaderboardView.vue";
+import StatsView from "@/components/admin-dashboard-content/StatsView.vue";
 import { useSidebarStore } from "@/stores/sidebar";
 
 const store = useSidebarStore();
-const activeComponent = computed(() => store.activeComponent);
+const componentsMap = {
+  TestView,
+  TestDetails,
+  LeaderboardView,
+  StatsView,
+};
+const activeComponent = computed(() => componentsMap[store.activeComponent]);
 </script>

@@ -20,6 +20,7 @@
           />
         </div>
         <button
+          @click="createNewTest"
           class="mx-3 px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 flex items-center"
         >
           <PencilSquareIcon class="h-5 w-5 text-white mr-2" />
@@ -512,6 +513,34 @@ export default {
           // Optionally, show an error notification
         }
       }
+    },
+    createNewTest() {
+      const sidebarStore = useSidebarStore(); // Use the store
+      const newTest = {
+        name: "Naujas testas",
+        url: "Nėra URL",
+        questions: [],
+      };
+
+      fetch("http://localhost:3001/api/tests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newTest),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          sidebarStore.selectTest(data._id); // Set the test ID in the store and switch view
+        })
+        .catch((error) => {
+          console.error("Failed to create new test:", error);
+        });
     },
     cancelDelete() {
       this.showDeleteConfirmation = false;
