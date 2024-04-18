@@ -104,16 +104,15 @@ router.post("/:testId/questions/:questionId/answers", async (req, res) => {
         .json({ noquestionfound: "No question found with that ID" });
     }
 
-    const newAnswer = { text: req.body.text, correct: req.body.correct }; // Ensure the new answer is constructed correctly
+    const newAnswer = { text: req.body.text, correct: req.body.correct };
     question.answers.push(newAnswer);
     await test.save();
 
-    // Since `question.answers.pop()` might not be reliable, use another method to get the last added answer
     const addedAnswer = question.answers[question.answers.length - 1];
     if (!addedAnswer) {
       return res.status(500).json({ error: "Failed to add new answer" });
     }
-    res.json(addedAnswer); // Send back the newly added answer object
+    res.json(addedAnswer);
   } catch (err) {
     console.error("Error on adding answer:", err);
     res.status(500).json({ error: "Server error" });

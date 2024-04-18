@@ -16,7 +16,6 @@ router.post("/login", async (req, res) => {
       return res.status(401).send("Invalid email or password");
     }
 
-    // Since passwords are not hashed for debugging, we compare directly
     if (password !== user.password) {
       console.log("Password does not match for user: ", user);
       return res.status(401).send("Invalid email or password");
@@ -38,7 +37,7 @@ router.post("/logout", (req, res) => {
       httpOnly: true,
       sameSite: "strict",
       path: "/",
-      secure: false, // Should be true in production when using HTTPS
+      secure: false,
     })
     .send("Logout successful");
 });

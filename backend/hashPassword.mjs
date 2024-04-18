@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 
-const password = "abc"; // The password you want to hash
-const saltRounds = 10; // Adjust the cost factor as needed
+const password = "slaptazodis";
+const saltRounds = 10;
 
 bcrypt
   .hash(password, saltRounds)
